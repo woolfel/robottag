@@ -1,8 +1,8 @@
 # Robot Tag
 
-Dependencies
-DeepLearning4J
-JDK 1.8
+Dependencies:
+DeepLearning4J,
+JDK 1.8,
 Eclipse IDE
 
 Description
