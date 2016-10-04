@@ -20,8 +20,6 @@
 	<classpathentry kind="lib" path="lib/nd4j-buffer-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-native-api-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-native-platform-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/nd4j-cuda-7.5-0.6.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/nd4j-cuda-7.5-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/datavec-api-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/datavec-data-codec-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/datavec-data-image-0.6.0.jar"/>
@@ -37,5 +35,20 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-context-0.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/reflections-0.9.10.jar"/>
+	<classpathentry kind="lib" path="lib/javassist-3.19.0-GA.jar"/>
+	<classpathentry kind="lib" path="lib/nd4j-native-0.6.0-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/nd4j-native-0.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/ffmpeg-3.0.2-1.2-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/ffmpeg-3.0.2-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javacpp-1.2.4.jar"/>
+	<classpathentry kind="lib" path="lib/javacv-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/leptonica-1.73-1.2-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/leptonica-1.73-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/opencv-3.1.0-1.2-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/opencv-3.1.0-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
