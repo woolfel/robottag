@@ -1,6 +1,5 @@
 package org.woolfel.robottag;
 
-
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
@@ -19,10 +18,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**A Simple MLP applied to digit classification for MNIST.
- */
-public class MLPMnistSingleLayerExample {
+public class MLPMnistTwoLayerExample {
 
     private static Logger log = LoggerFactory.getLogger(MLPMnistSingleLayerExample.class);
 
@@ -30,9 +26,10 @@ public class MLPMnistSingleLayerExample {
         final int numRows = 28;
         final int numColumns = 28;
         int outputNum = 10;
-        int batchSize = 128;
+        int batchSize = 64;
         int rngSeed = 123;
         int numEpochs = 15;
+        double rate = 0.0015;
 
         //Get the DataSetIterators:
         DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed);
@@ -41,39 +38,42 @@ public class MLPMnistSingleLayerExample {
 
         log.info("Build model....");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .seed(rngSeed)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .iterations(1)
-                .learningRate(0.006)
-                .updater(Updater.NESTEROVS).momentum(0.9)
-                .regularization(true).l2(1e-4)
-                .list()
-                .layer(0, new DenseLayer.Builder()
-                        .nIn(numRows * numColumns)
-                        .nOut(1000)
-                        .activation("relu")
-                        .weightInit(WeightInit.XAVIER)
-                        .build())
-                .layer(1, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nIn(1000)
-                        .nOut(outputNum)
-                        .activation("softmax")
-                        .weightInit(WeightInit.XAVIER)
-                        .build())
-                .pretrain(false).backprop(true)
-                .build();
+            .seed(rngSeed)
+            .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+            .iterations(1)
+            .activation("relu")
+            .weightInit(WeightInit.XAVIER)
+            .learningRate(rate)
+            .updater(Updater.NESTEROVS).momentum(0.98)
+            .regularization(true).l2(rate * 0.005)
+            .list()
+            .layer(0, new DenseLayer.Builder()
+                    .nIn(numRows * numColumns)
+                    .nOut(500)
+                    .build())
+            .layer(1,  new DenseLayer.Builder()
+                    .nIn(500)
+                    .nOut(100)
+                    .build())
+            .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
+                    .activation("softmax")
+                    .nIn(100)
+                    .nOut(outputNum)
+                    .build())
+            .pretrain(false).backprop(true)
+            .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         long start = System.currentTimeMillis();
         model.init();
-        model.setListeners(new ScoreIterationListener(1));
+        model.setListeners(new ScoreIterationListener(5));
 
         log.info("Train model....");
         for( int i=0; i<numEpochs; i++ ){
+        	log.info("Epoch " + i);
             model.fit(mnistTrain);
         }
         long end = System.currentTimeMillis();
-
 
         log.info("Evaluate model....");
         Evaluation eval = new Evaluation(outputNum);

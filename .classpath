@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="lib/commons-math3-3.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
