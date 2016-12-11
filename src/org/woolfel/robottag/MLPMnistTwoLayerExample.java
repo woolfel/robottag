@@ -26,10 +26,10 @@ public class MLPMnistTwoLayerExample {
         final int numRows = 28;
         final int numColumns = 28;
         int outputNum = 10;
-        int batchSize = 64;
+        int batchSize = 128;
         int rngSeed = 123;
         int numEpochs = 15;
-        double rate = 0.0015;
+        double rate = 0.006;
 
         //Get the DataSetIterators:
         DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed);
