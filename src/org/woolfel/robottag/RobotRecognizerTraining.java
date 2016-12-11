@@ -71,7 +71,7 @@ public class RobotRecognizerTraining {
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-	        .iterations(1)
+	        .iterations(2)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
@@ -79,11 +79,10 @@ public class RobotRecognizerTraining {
 	        .regularization(true).l2(rate * 0.005)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
-	                .nIn(height * width)
-	                .nOut(500)
+	                .nOut(100)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(500)
+	                .nIn(100)
 	                .nOut(100)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
@@ -111,9 +110,9 @@ public class RobotRecognizerTraining {
 	        
 	        System.out.println(" --- start TEST ---");
 	        // test phase
-	        ImageRecordReader testRecordReader = new ImageRecordReader(height,width,channels,labelMaker);
-	        testRecordReader.initialize(testData);
-	        DataSetIterator testIter = new RecordReaderDataSetIterator(testRecordReader, 5, 1, outputNum);
+	        recordReader.reset();
+	        recordReader.initialize(testData);
+	        DataSetIterator testIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 	        Evaluation eval = new Evaluation(outputNum);
 	        while(testIter.hasNext()){
 	            DataSet next = testIter.next();
