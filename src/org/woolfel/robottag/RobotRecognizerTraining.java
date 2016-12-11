@@ -40,7 +40,7 @@ public class RobotRecognizerTraining {
     protected static int channels = 3;
     protected static int numExamples = 100;
     protected static int outputNum = 4;
-    protected static final long seed = 123;// 2971; // I like prime numbers
+    protected static final long seed = 2971; // I like prime numbers
     protected static double rate = 0.006;
 
     public static final Random randNumGen = new Random(seed);
@@ -71,7 +71,7 @@ public class RobotRecognizerTraining {
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-	        .iterations(2)
+	        .iterations(1)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
@@ -84,11 +84,11 @@ public class RobotRecognizerTraining {
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
 	                .nIn(500)
-	                .nOut(200)
+	                .nOut(100)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(200)
+	                .nIn(100)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)
@@ -117,7 +117,7 @@ public class RobotRecognizerTraining {
 	        Evaluation eval = new Evaluation(outputNum);
 	        while(testIter.hasNext()){
 	            DataSet next = testIter.next();
-	            INDArray output = model.output(next.getFeatureMatrix());
+	            INDArray output = model.output(next.getFeatureMatrix(), false);
 	            eval.eval(next.getLabels(), output);
 	        }
 	        System.out.println(eval.stats());
