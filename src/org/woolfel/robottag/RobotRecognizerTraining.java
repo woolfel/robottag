@@ -79,15 +79,15 @@ public class RobotRecognizerTraining {
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	                .nIn(height * width)
-	                .nOut(800)
+	                .nOut(1000)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(800)
-	                .nOut(100)
+	                .nIn(1000)
+	                .nOut(200)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(100)
+	                .nIn(200)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false).backprop(true)
@@ -104,7 +104,9 @@ public class RobotRecognizerTraining {
 	        	model.fit(nxt.getFeatureMatrix());
 	        }
 	        long end = System.currentTimeMillis();
+	        System.out.println(" --- end training ---");
 	        
+	        System.out.println(" --- start TEST ---");
 	        // test phase
 	        ImageRecordReader testRecordReader = new ImageRecordReader(height,width,channels,labelMaker);
 	        testRecordReader.initialize(testData);
