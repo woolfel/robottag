@@ -106,9 +106,9 @@ public class RobotRecognizerTraining {
 	        long end = System.currentTimeMillis();
 	        
 	        // test phase
-	        recordReader = new ImageRecordReader(height,width,channels,labelMaker);
-	        recordReader.initialize(testData);
-	        DataSetIterator testIter = new RecordReaderDataSetIterator(recordReader, 10, 1, outputNum);
+	        ImageRecordReader testRecordReader = new ImageRecordReader(height,width,channels,labelMaker);
+	        testRecordReader.initialize(testData);
+	        DataSetIterator testIter = new RecordReaderDataSetIterator(testRecordReader, 5, 1, outputNum);
 	        Evaluation eval = new Evaluation(outputNum);
 	        while(testIter.hasNext()){
 	            DataSet next = testIter.next();
