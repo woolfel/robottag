@@ -19,6 +19,7 @@ import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -79,10 +80,10 @@ public class RobotRecognizerTraining {
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	                .nIn(height * width)
-	                .nOut(1000)
+	                .nOut(500)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(1000)
+	                .nIn(500)
 	                .nOut(200)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
@@ -90,7 +91,9 @@ public class RobotRecognizerTraining {
 	                .nIn(200)
 	                .nOut(outputNum)
 	                .build())
-	        .pretrain(false).backprop(true)
+	        .pretrain(false)
+	        .setInputType(InputType.convolutional(height,width,channels))
+	        .backprop(true)
 	        .build();
 
 	        MultiLayerNetwork model = new MultiLayerNetwork(conf);
