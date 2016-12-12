@@ -41,10 +41,10 @@ public class BWRobotTraining {
 	protected static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
     protected static int height = 240;
     protected static int width = 320;
-    protected static int channels = 3;
+    protected static int channels = 1;
     protected static int numExamples = 100;
     protected static int outputNum = 4;
-    protected static final long seed = 2971; // I like prime numbers
+    protected static final long seed = 1234; // I like prime numbers
     protected static double rate = 0.006;
 
     public static final Random randNumGen = new Random(seed);
@@ -55,7 +55,7 @@ public class BWRobotTraining {
 
 	public static void main(String[] args) {
 		try {
-			File parentDir = new File("./data/robot_clearcase");
+			File parentDir = new File("./data/robot_clearcase_bw");
 			
 			ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
@@ -67,16 +67,15 @@ public class BWRobotTraining {
 	        InputSplit testData = filesInDirSplit[1];
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
-	        ImageTransform transform = new MultiImageTransform(randNumGen, new ColorConversionTransform(randNumGen,opencv_imgproc.COLOR_RGB2GRAY));
 
-	        recordReader.initialize(trainData, transform);
+	        recordReader.initialize(trainData);
 
 	        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-	        .iterations(2)
+	        .iterations(1)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
@@ -84,19 +83,19 @@ public class BWRobotTraining {
 	        .regularization(true).l2(rate * 0.005)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
-	                .nOut(1000)
+	                .nOut(800)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(1000)
-	                .nOut(200)
+	                .nIn(800)
+	                .nOut(100)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(200)
+	                .nIn(100)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)
-	        .setInputType(InputType.convolutional(height,width,1))
+	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)
 	        .build();
 
