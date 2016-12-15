@@ -57,10 +57,10 @@ public class RobotRecognizerTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        int oc = 68;
+	        int oc = 62;
 	        // 1000, 68 - 48% P
 	        // 1000, 61 - 29% P, 30% A
-	        // 1000, 62 - 34% P, 34% A
+	        // 1000, 62 - 35% P, 35% A
 	        // 1000, 65 - 63% P, 28% A
 
         	System.out.println(" ---------- The input to OutputLayer: " + oc + " ------------");
@@ -98,7 +98,7 @@ public class RobotRecognizerTraining {
 	                .nIn(oc)
 	                .nOut(outputNum)
 	                .build())
-	        .pretrain(false)
+	        .pretrain(true)
 	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)
 	        .build();

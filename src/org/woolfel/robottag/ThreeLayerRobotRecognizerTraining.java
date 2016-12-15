@@ -58,7 +58,7 @@ public class ThreeLayerRobotRecognizerTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        for (int oc=71; oc < 75; oc++) {
+	        for (int oc=65; oc < 75; oc++) {
 	        	System.out.println(" ---------- The input to OutputLayer: " + oc + " ------------");
 		        //Split the image files into train and test. Specify the train test split as 80%,20%
 		        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
@@ -94,7 +94,7 @@ public class ThreeLayerRobotRecognizerTraining {
 		                .nIn(oc)
 		                .nOut(outputNum)
 		                .build())
-		        .pretrain(false)
+		        .pretrain(true)
 		        .setInputType(InputType.convolutional(height,width,channels))
 		        .backprop(true)
 		        .build();

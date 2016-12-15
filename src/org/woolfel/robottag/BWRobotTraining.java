@@ -95,7 +95,7 @@ public class BWRobotTraining {
 	                .nIn(71)
 	                .nOut(outputNum)
 	                .build())
-	        .pretrain(false)
+	        .pretrain(true)
 	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)
 	        .build();

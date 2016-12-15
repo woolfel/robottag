@@ -69,10 +69,13 @@ public class MLPMnistSingleLayerExample {
         model.setListeners(new ScoreIterationListener(1));
 
         log.info("Train model....");
+        int loops = 0;
         for( int i=0; i<numEpochs; i++ ){
             model.fit(mnistTrain);
+            loops++;
         }
         long end = System.currentTimeMillis();
+        System.out.println(" Loop count: " + loops);
 
 
         log.info("Evaluate model....");
