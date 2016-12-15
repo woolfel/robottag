@@ -41,8 +41,8 @@ public class SymbolTraining {
     protected static int numExamples = 40;
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
-    protected static double rate = 0.006;
-    protected static int epochs = 2000;
+    protected static double rate = 0.0006;
+    protected static int epochs = 4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining.class);
@@ -58,13 +58,20 @@ public class SymbolTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        //Split the image files into train and test. Specify the train test split as 80%,20%
+	        //Split the image files into train and test.
 	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
 	        InputSplit trainData = filesInDirSplit[0];
 	        InputSplit testData = filesInDirSplit[1];
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
+	        // 1500, 81 - 35% A, 48% P
+	        // 1500, 75 - 35% A, 35.4% P
+	        // 1500, 79 - 35% A, 36.6% P
+	        
+	        int outputIn = 81;
+	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
+	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -78,16 +85,16 @@ public class SymbolTraining {
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
 	                .nOut(1500)
-	                .weightInit(WeightInit.RELU)
+	                .weightInit(WeightInit.XAVIER)
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
             		.nIn(1500)
-            		.nOut(81)
-            		.weightInit(WeightInit.RELU)
+            		.nOut(outputIn)
+            		.weightInit(WeightInit.XAVIER)
             		.build())
 		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 		            .activation("softmax")
-		            .nIn(81)
+		            .nIn(outputIn)
 		            .nOut(outputNum)
 		            .build())
 	        .pretrain(false)
