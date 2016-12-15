@@ -38,11 +38,10 @@ public class RobotRecognizerTraining {
     protected static int height = 240;
     protected static int width = 320;
     protected static int channels = 3;
-    protected static int numExamples = 100;
     protected static int outputNum = 4;
     protected static final long seed = 1234; 
-    protected static double rate = 0.006;
-    protected static int epochs = 2000;
+    protected static double rate = 0.0006;
+    protected static int epochs = 4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(RobotRecognizerTraining.class);
@@ -58,11 +57,15 @@ public class RobotRecognizerTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        int oc = 69;
+	        int oc = 68;
+	        // 1000, 68 - 48% P
+	        // 1000, 61 - 29% P, 30% A
+	        // 1000, 62 - 34% P, 34% A
+	        // 1000, 65 - 63% P, 28% A
 
         	System.out.println(" ---------- The input to OutputLayer: " + oc + " ------------");
-	        //Split the image files into train and test. Specify the train test split as 80%,20%
-	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
+	        //Split the image files into train and test.
+	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 10, 90);
 	        InputSplit trainData = filesInDirSplit[0];
 	        InputSplit testData = filesInDirSplit[1];
 	        
@@ -82,13 +85,13 @@ public class RobotRecognizerTraining {
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
-	                .nOut(1500)
+	                .nOut(1000)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(1500)
+	                .nIn(1000)
 	                .nOut(oc)
-	                .weightInit(WeightInit.RELU)
+	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")

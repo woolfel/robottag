@@ -61,8 +61,8 @@ public class BWRobotTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        //Split the image files into train and test. Specify the train test split as 80%,20%
-	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
+	        //Split the image files into train and test.
+	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 20, 80);
 	        InputSplit trainData = filesInDirSplit[0];
 	        InputSplit testData = filesInDirSplit[1];
 	        

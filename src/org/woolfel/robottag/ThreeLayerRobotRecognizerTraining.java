@@ -42,7 +42,7 @@ public class ThreeLayerRobotRecognizerTraining {
     protected static int outputNum = 4;
     protected static final long seed = 1234; 
     protected static double rate = 0.006;
-    protected static int epochs = 2000;
+    protected static int epochs = 4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(ThreeLayerRobotRecognizerTraining.class);
@@ -58,7 +58,7 @@ public class ThreeLayerRobotRecognizerTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-	        for (int oc=65; oc < 71; oc++) {
+	        for (int oc=71; oc < 75; oc++) {
 	        	System.out.println(" ---------- The input to OutputLayer: " + oc + " ------------");
 		        //Split the image files into train and test. Specify the train test split as 80%,20%
 		        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
@@ -87,7 +87,7 @@ public class ThreeLayerRobotRecognizerTraining {
 		        .layer(1,  new DenseLayer.Builder()
 		                .nIn(1500)
 		                .nOut(oc)
-		                .weightInit(WeightInit.RELU)
+		                .weightInit(WeightInit.XAVIER)
 		                .build())
 		        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 		                .activation("softmax")
