@@ -42,7 +42,6 @@ public class BWRobotTraining {
     protected static int height = 240;
     protected static int width = 320;
     protected static int channels = 1;
-    protected static int numExamples = 100;
     protected static int outputNum = 4;
     protected static final long seed = 1234; 
     protected static double rate = 0.0006;
