@@ -3,15 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/arbiter-deeplearning4j-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-aws-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-core-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-graph-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-nlp-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-nlp-uima-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-nn-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-ui-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/deeplearning4j-ui-components-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/guava-19.0.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.5.1.jar"/>
@@ -51,5 +42,22 @@
 	<classpathentry kind="lib" path="lib/nd4j-base64-0.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-context-0.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-native-0.7.1-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-aws-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-core-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-graph-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-modelimport-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-nlp-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-nlp-uima-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-nn-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-ui-components-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-ui-model-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/deeplearning4j-ui-resources-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/arbiter-core-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/arbiter-deeplearning4j-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/dl4j-spark_2.11-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/dl4j-spark-nlp_2.11-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/nd4j-jdbc-api-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/nd4j-parameter-server-0.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
