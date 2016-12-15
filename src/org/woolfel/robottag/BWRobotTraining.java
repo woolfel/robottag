@@ -46,7 +46,7 @@ public class BWRobotTraining {
     protected static int outputNum = 4;
     protected static final long seed = 12345; 
     protected static double rate = 0.006;
-    protected static int epochs = 2000;
+    protected static int epochs = 12000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(BWRobotTraining.class);
@@ -84,14 +84,16 @@ public class BWRobotTraining {
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
 	                .nOut(1500)
+	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
 	                .nIn(1500)
-	                .nOut(500)
+	                .nOut(56)
+	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(500)
+	                .nIn(56)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)

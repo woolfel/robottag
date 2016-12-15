@@ -58,6 +58,9 @@ public class RobotRecognizerTraining {
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
+	        int oc = 69;
+
+        	System.out.println(" ---------- The input to OutputLayer: " + oc + " ------------");
 	        //Split the image files into train and test. Specify the train test split as 80%,20%
 	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
 	        InputSplit trainData = filesInDirSplit[0];
@@ -84,12 +87,17 @@ public class RobotRecognizerTraining {
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
 	                .nIn(1500)
-	                .nOut(300)
+	                .nOut(oc *2)
 	                .weightInit(WeightInit.RELU)
 	                .build())
-	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
+	        .layer(2,  new DenseLayer.Builder()
+	                .nIn(oc *2)
+	                .nOut(oc)
+	                .weightInit(WeightInit.RELU)
+	                .build())
+	        .layer(3, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(300)
+	                .nIn(oc)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)
@@ -129,6 +137,7 @@ public class RobotRecognizerTraining {
 	        long duration = end - start;
 	        System.out.println(" training duration in MS: " + duration);
 	        System.out.println(" training duration in Min: " + (duration/1000)/60);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
