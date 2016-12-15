@@ -44,8 +44,9 @@ public class BWRobotTraining {
     protected static int channels = 1;
     protected static int numExamples = 100;
     protected static int outputNum = 4;
-    protected static final long seed = 1234; // I like prime numbers
+    protected static final long seed = 12345; 
     protected static double rate = 0.006;
+    protected static int epochs = 2000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(BWRobotTraining.class);
@@ -62,7 +63,7 @@ public class BWRobotTraining {
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
 	        //Split the image files into train and test. Specify the train test split as 80%,20%
-	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 80, 20);
+	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
 	        InputSplit trainData = filesInDirSplit[0];
 	        InputSplit testData = filesInDirSplit[1];
 	        
@@ -70,8 +71,6 @@ public class BWRobotTraining {
 
 	        recordReader.initialize(trainData);
 
-	        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
-	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -79,19 +78,20 @@ public class BWRobotTraining {
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.98)
-	        .regularization(true).l2(rate * 0.005)
+	        .updater(Updater.NESTEROVS).momentum(0.92)
+	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
-	                .nOut(800)
+	        		.nIn(height * width * channels)
+	                .nOut(1500)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(800)
-	                .nOut(100)
+	                .nIn(1500)
+	                .nOut(500)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(100)
+	                .nIn(500)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)
@@ -103,11 +103,14 @@ public class BWRobotTraining {
 	        System.out.println(" --- start training ---");
 	        long start = System.currentTimeMillis();
 	        model.init();
-	        model.setListeners(new ScoreIterationListener(5));
+	        model.setListeners(new ScoreIterationListener(1));
 
-	        while( dataIter.hasNext()) {
-	        	DataSet nxt = dataIter.next();
-	        	model.fit(nxt.getFeatureMatrix());
+	        for (int i=0; i < epochs; i++) {
+		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
+		        while( dataIter.hasNext()) {
+		        	DataSet nxt = dataIter.next();
+		        	model.fit(nxt.getFeatureMatrix());
+		        }
 	        }
 	        long end = System.currentTimeMillis();
 	        System.out.println(" --- end training ---");
@@ -120,7 +123,7 @@ public class BWRobotTraining {
 	        Evaluation eval = new Evaluation(outputNum);
 	        while(testIter.hasNext()){
 	            DataSet next = testIter.next();
-	            INDArray output = model.output(next.getFeatureMatrix(), false);
+	            INDArray output = model.output(next.getFeatureMatrix(), true);
 	            eval.eval(next.getLabels(), output);
 	        }
 	        System.out.println(eval.stats());

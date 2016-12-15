@@ -42,7 +42,7 @@ public class SymbolTraining {
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
     protected static double rate = 0.006;
-    protected static int epochs = 40;
+    protected static int epochs = 50000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining.class);
@@ -69,10 +69,10 @@ public class SymbolTraining {
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
 	        .iterations(1)
-	        .activation("leakyrelu")
+	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.95)
+	        .updater(Updater.NESTEROVS).momentum(0.82)
 	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
@@ -98,7 +98,7 @@ public class SymbolTraining {
 
 	        recordReader.initialize(trainData);
 	        for (int i=0; i < epochs; i++) {
-		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 10, 1, outputNum);
+		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 		        while( dataIter.hasNext()) {
 		        	DataSet nxt = dataIter.next();
 		        	model.fit(nxt.getFeatureMatrix());
@@ -112,7 +112,7 @@ public class SymbolTraining {
 	        recordReader.reset();
 	        recordReader.initialize(testData);
 	        Evaluation eval = new Evaluation(outputNum);
-	        DataSetIterator testIter = new RecordReaderDataSetIterator(recordReader, 10, 1, outputNum);
+	        DataSetIterator testIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 	        while(testIter.hasNext()){
 	            DataSet next = testIter.next();
 	            INDArray output = model.output(next.getFeatureMatrix(), true);
