@@ -42,7 +42,7 @@ public class SymbolTraining {
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
     protected static double rate = 0.006;
-    protected static int epochs = 50000;
+    protected static int epochs = 2000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining.class);
@@ -72,19 +72,24 @@ public class SymbolTraining {
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.82)
+	        .updater(Updater.NESTEROVS).momentum(0.98)
 	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
-	                .nOut(1000)
-	                .weightInit(WeightInit.XAVIER)
+	                .nOut(1500)
+	                .weightInit(WeightInit.RELU)
 	                .build())
-	        .layer(1, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
-	                .activation("softmax")
-	                .nIn(1000)
-	                .nOut(outputNum)
-	                .build())
+		    .layer(1,  new DenseLayer.Builder()
+            		.nIn(1500)
+            		.nOut(81)
+            		.weightInit(WeightInit.RELU)
+            		.build())
+		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
+		            .activation("softmax")
+		            .nIn(81)
+		            .nOut(outputNum)
+		            .build())
 	        .pretrain(false)
 	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)

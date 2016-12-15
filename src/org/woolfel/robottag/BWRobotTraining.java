@@ -44,9 +44,9 @@ public class BWRobotTraining {
     protected static int channels = 1;
     protected static int numExamples = 100;
     protected static int outputNum = 4;
-    protected static final long seed = 12345; 
-    protected static double rate = 0.006;
-    protected static int epochs = 12000;
+    protected static final long seed = 1234; 
+    protected static double rate = 0.0006;
+    protected static int epochs = 4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(BWRobotTraining.class);
@@ -88,12 +88,12 @@ public class BWRobotTraining {
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
 	                .nIn(1500)
-	                .nOut(56)
+	                .nOut(71)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(56)
+	                .nIn(71)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(false)
@@ -105,7 +105,7 @@ public class BWRobotTraining {
 	        System.out.println(" --- start training ---");
 	        long start = System.currentTimeMillis();
 	        model.init();
-	        model.setListeners(new ScoreIterationListener(1));
+	        model.setListeners(new ScoreIterationListener(2));
 
 	        for (int i=0; i < epochs; i++) {
 		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
