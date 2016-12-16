@@ -9,11 +9,7 @@ import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
-import org.datavec.image.transform.ImageTransform;
-import org.datavec.image.transform.MultiImageTransform;
-import org.datavec.image.transform.ShowImageTransform;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -38,11 +34,10 @@ public class SymbolTraining {
     protected static int height = 240;
     protected static int width = 320;
     protected static int channels = 3;
-    protected static int numExamples = 40;
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
     protected static double rate = 0.0006;
-    protected static int epochs = 4000;
+    protected static int epochs = 15; //4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining.class);
@@ -66,15 +61,17 @@ public class SymbolTraining {
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
 	        // 1500, 81 - 35% A, 48% P
-	        // 1500, 75 - 35% A, 35.4% P
 	        // 1500, 79 - 35% A, 36.6% P
+	        // 1000, 66 - 40% A, 36.3% P
+	        // 1000, 43 - 35% A, 39.2% P
 	        
-	        int outputIn = 81;
+	        int l1out = 800;
+	        int outputIn = 71;
 	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
-	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+	        .optimizationAlgo(OptimizationAlgorithm.LBFGS)
 	        .iterations(1)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
@@ -84,11 +81,11 @@ public class SymbolTraining {
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
-	                .nOut(1500)
+	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
-            		.nIn(1500)
+            		.nIn(l1out)
             		.nOut(outputIn)
             		.weightInit(WeightInit.XAVIER)
             		.build())

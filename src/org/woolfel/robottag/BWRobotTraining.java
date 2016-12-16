@@ -3,21 +3,13 @@ package org.woolfel.robottag;
 import java.io.File;
 import java.util.Random;
 
-import org.bytedeco.javacpp.opencv_imgproc;
-import org.bytedeco.javacpp.opencv_imgproc.Subdiv2D;
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
-import org.datavec.image.transform.ColorConversionTransform;
-import org.datavec.image.transform.FilterImageTransform;
-import org.datavec.image.transform.ImageTransform;
-import org.datavec.image.transform.MultiImageTransform;
-import org.datavec.image.transform.ShowImageTransform;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -45,7 +37,7 @@ public class BWRobotTraining {
     protected static int outputNum = 4;
     protected static final long seed = 1234; 
     protected static double rate = 0.0006;
-    protected static int epochs = 4000;
+    protected static int epochs = 13;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(BWRobotTraining.class);
@@ -62,14 +54,25 @@ public class BWRobotTraining {
 	        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
 	        //Split the image files into train and test.
-	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 20, 80);
+	        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
 	        InputSplit trainData = filesInDirSplit[0];
 	        InputSplit testData = filesInDirSplit[1];
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
 	        recordReader.initialize(trainData);
-
+	        // Data split 80/20
+	        // 1500, 71 - 40.0% A, 45.2% P, 40.0% R, 42.6% F1
+	        // 1200, 61 - 23.7% A, 47.6% P, 23.7% R, 31.0% F1
+	        // 948, 50  - 36.2% A, 41.1% P, 36.2% R, 38.5% F1
+	        
+	        // Data split 50/50
+	        // 1500, 71 - 42.0% A, 47.1% P, 43.7% R, 45.3% F1
+	        
+	        int l1out = 1500;
+	        int outputIn = 71;
+	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
+	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -77,22 +80,22 @@ public class BWRobotTraining {
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.92)
+	        .updater(Updater.NESTEROVS).momentum(0.96)
 	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
-	                .nOut(1500)
+	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
-	                .nIn(1500)
-	                .nOut(71)
+	                .nIn(l1out)
+	                .nOut(outputIn)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(71)
+	                .nIn(outputIn)
 	                .nOut(outputNum)
 	                .build())
 	        .pretrain(true)
