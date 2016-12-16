@@ -37,7 +37,7 @@ public class SymbolTraining {
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
     protected static double rate = 0.0006;
-    protected static int epochs = 15; //4000;
+    protected static int epochs = 5; //4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining.class);
@@ -64,6 +64,7 @@ public class SymbolTraining {
 	        // 1500, 79 - 35% A, 36.6% P
 	        // 1000, 66 - 40% A, 36.3% P
 	        // 1000, 43 - 35% A, 39.2% P
+	        // 800,  71 - 36.6% A, 36.8% P, 37% R
 	        
 	        int l1out = 800;
 	        int outputIn = 71;
