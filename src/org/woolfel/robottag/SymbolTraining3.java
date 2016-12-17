@@ -34,11 +34,11 @@ public class SymbolTraining3 {
     protected static int width = 50;
     protected static int channels = 3;
     protected static int outputNum = 4;
-    protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
-    protected static double rate = 0.006;
-    protected static int epochs = 5; //4000;
+    protected static final long seed = 4464;
+    protected static double rate = 0.0006;
+    protected static int epochs = 7000; //4000;
 
-    public static final Random randNumGen = new Random();
+    public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining3.class);
     
 	public SymbolTraining3() {
@@ -65,16 +65,15 @@ public class SymbolTraining3 {
 	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
 	        
 	        // seed values
-	        // 326, 5512, 3351
+	        // 326, 5512, 3351, 4464
 	        
 	        int l1out = 900;
 	        int outputIn = 500;
-	        int newseed = randNumGen.nextInt(9000);
-	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
-	        System.out.println(" --------- new seed: " + newseed + " -----------");
+
+	        System.out.println(" --------- # of input the Layers: " + l1out + ", " + outputIn + " -----------");
+	        //System.out.println(" --------- new seed: " + seed + " -----------");
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-	        .seed(newseed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
 	        .iterations(1)
 	        .activation("relu")
@@ -87,13 +86,13 @@ public class SymbolTraining3 {
 	        		.nIn(height * width * channels)
 	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
-	                .activation("relu")
+	                .activation("softsign")
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
             		.nIn(l1out)
             		.nOut(outputIn)
             		.weightInit(WeightInit.XAVIER)
-            		.activation("relu")
+            		.activation("softsign")
             		.build())
 		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 		            .activation("softmax")
@@ -135,8 +134,8 @@ public class SymbolTraining3 {
 	        }
 	        System.out.println(" --- end TEST ---");
 	        
+	        System.out.println("**************** Run finished********************");
 	        System.out.println(eval.stats());
-	        System.out.println("****************Example finished********************");
 	        long duration = end - start;
 	        System.out.println(" training duration in MS: " + duration);
 	        System.out.println(" training duration in Min: " + (duration/1000)/60);

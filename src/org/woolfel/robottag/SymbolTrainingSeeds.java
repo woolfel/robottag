@@ -73,7 +73,7 @@ public class SymbolTrainingSeeds {
 
 	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
 
-	        for (int s=0; s < 5000; s++) {
+	        for (int s=0; s < 8000; s++) {
 		        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 		        .seed(s)
 		        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -136,7 +136,7 @@ public class SymbolTrainingSeeds {
 		        }
 		        //System.out.println(" --- end TEST ---");
 		        
-		        if (eval.accuracy() > 0.5 || eval.precision() > 0.5) {
+		        if (eval.accuracy() > 0.5 && eval.precision() > 0.5) {
 		        	log.info(eval.stats());
 		        	goodSeeds.add(s);
 			        System.out.println("****************Example finished********************");
