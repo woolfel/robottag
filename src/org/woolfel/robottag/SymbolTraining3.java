@@ -35,8 +35,8 @@ public class SymbolTraining3 {
     protected static int channels = 3;
     protected static int outputNum = 4;
     protected static final long seed = 4464;
-    protected static double rate = 0.0006;
-    protected static int epochs = 7000; //4000;
+    protected static double rate = 0.006;
+    protected static int epochs = 5; //4000;
 
     public static final Random randNumGen = new Random(seed);
     private static Logger log = LoggerFactory.getLogger(SymbolTraining3.class);
@@ -59,40 +59,39 @@ public class SymbolTraining3 {
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
-	        // 100, 23 - 35% A, 23.0% P, 35% R, 28.0% F1
-	        // 100, 24 - 40% A, 64.7% P, 40% R, 49.4% F1
 	        // 900, 71 - 45% A, 45.8% P, 45% R, 45.4% F1
 	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
 	        
 	        // seed values
-	        // 326, 5512, 3351, 4464
+	        // 4464
 	        
 	        int l1out = 900;
 	        int outputIn = 500;
 
 	        System.out.println(" --------- # of input the Layers: " + l1out + ", " + outputIn + " -----------");
-	        //System.out.println(" --------- new seed: " + seed + " -----------");
+	        System.out.println(" --------- new seed: " + seed + " -----------");
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+	        .seed(seed)
 	        .iterations(1)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.5)
+	        .updater(Updater.NESTEROVS).momentum(0.98)
 	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
 	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
-	                .activation("softsign")
+	                .activation("relu")
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
             		.nIn(l1out)
             		.nOut(outputIn)
             		.weightInit(WeightInit.XAVIER)
-            		.activation("softsign")
+            		.activation("relu")
             		.build())
 		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 		            .activation("softmax")

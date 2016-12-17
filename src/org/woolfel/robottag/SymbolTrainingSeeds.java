@@ -66,14 +66,14 @@ public class SymbolTrainingSeeds {
 	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
 	        
 	        // seed values
-	        // 326, 5512, 3351, 4464, 4898
+	        // 4464, 4898
 	        
 	        int l1out = 900;
 	        int outputIn = 500;
 
 	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
 
-	        for (int s=0; s < 8000; s++) {
+	        for (int s=4450; s < 4900; s++) {
 		        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 		        .seed(s)
 		        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -81,7 +81,7 @@ public class SymbolTrainingSeeds {
 		        .activation("relu")
 		        .weightInit(WeightInit.XAVIER)
 		        .learningRate(rate)
-		        .updater(Updater.NESTEROVS).momentum(0.5)
+		        .updater(Updater.NESTEROVS).momentum(0.98)
 		        .regularization(true).l2(1e-6)
 		        .list()
 		        .layer(0, new DenseLayer.Builder()
@@ -138,6 +138,7 @@ public class SymbolTrainingSeeds {
 		        
 		        if (eval.accuracy() > 0.5 && eval.precision() > 0.5) {
 		        	log.info(eval.stats());
+		        	log.info(" ------------------ Seed: " + s);
 		        	goodSeeds.add(s);
 			        System.out.println("****************Example finished********************");
 			        System.out.println(eval.stats());
@@ -147,7 +148,7 @@ public class SymbolTrainingSeeds {
 			        System.out.println(" training duration in Min: " + (duration/1000)/60);
 		        }
 	        }
-	        System.out.println(" ----- the good seeds: " + goodSeeds.toArray() + " --------");
+
 	        System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
