@@ -27,26 +27,26 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SymbolTraining2 {
+public class SymbolTraining3 {
 
 	protected static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
-    protected static int height = 240;
-    protected static int width = 320;
+    protected static int height = 50;
+    protected static int width = 50;
     protected static int channels = 3;
     protected static int outputNum = 4;
     protected static final long seed = 1234; // seed of 1234 gets 30% accuracy
-    protected static double rate = 0.0006;
-    protected static int epochs = 2; //4000;
+    protected static double rate = 0.006;
+    protected static int epochs = 5; //4000;
 
-    public static final Random randNumGen = new Random(seed);
-    private static Logger log = LoggerFactory.getLogger(SymbolTraining2.class);
+    public static final Random randNumGen = new Random();
+    private static Logger log = LoggerFactory.getLogger(SymbolTraining3.class);
     
-	public SymbolTraining2() {
+	public SymbolTraining3() {
 	}
 
 	public static void main(String[] args) {
 		try {
-			File parentDir = new File("./data/symbols2");
+			File parentDir = new File("./data/symbols3");
 			
 			ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
 	        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
@@ -59,33 +59,35 @@ public class SymbolTraining2 {
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
-	        // 447, 71 - 35% A, 44.0% P, 35% R
-	        // 453, 71 - 35% A, 63.8% P, 35% R, 45.2% F1
-	        // 753, 71 - 40% A, 53.3% P, 40% R
-	        // 800, 71 - 45% A, 62.8% P, 45% R
+	        // 100, 23 - 35% A, 23.0% P, 35% R, 28.0% F1
+	        // 100, 24 - 40% A, 64.7% P, 40% R, 49.4% F1
+	        // 900, 71 - 45% A, 45.8% P, 45% R, 45.4% F1
+	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
 	        
-	        // layer 0 softsign activation
-	        // 453, 71 - 40% A, 43.7% P, 40% R, 41.7% F1
+	        // seed values
+	        // 326, 5512, 3351
 	        
-	        int l1out = 453;
-	        int outputIn = 71;
+	        int l1out = 900;
+	        int outputIn = 500;
+	        int newseed = randNumGen.nextInt(9000);
 	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
+	        System.out.println(" --------- new seed: " + newseed + " -----------");
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-	        .seed(seed)
+	        .seed(newseed)
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
 	        .iterations(1)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
-	        .updater(Updater.NESTEROVS).momentum(0.98)
+	        .updater(Updater.NESTEROVS).momentum(0.5)
 	        .regularization(true).l2(1e-6)
 	        .list()
 	        .layer(0, new DenseLayer.Builder()
 	        		.nIn(height * width * channels)
 	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
-	                .activation("softsign")
+	                .activation("relu")
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
             		.nIn(l1out)
@@ -94,7 +96,7 @@ public class SymbolTraining2 {
             		.activation("relu")
             		.build())
 		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
-		            .activation("relu")
+		            .activation("softmax")
 		            .nIn(outputIn)
 		            .nOut(outputNum)
 		            .build())
