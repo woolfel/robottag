@@ -35,11 +35,11 @@ public class BWRobotTraining {
     protected static int width = 320;
     protected static int channels = 1;
     protected static int outputNum = 4;
-    protected static final long seed = 1234; 
+    protected static final long seed = 4878; 
     protected static double rate = 0.0006;
-    protected static int epochs = 13;
+    protected static int epochs = 5;
 
-    public static final Random randNumGen = new Random(seed);
+    public static final Random randNumGen = new Random();
     private static Logger log = LoggerFactory.getLogger(BWRobotTraining.class);
     
 	public BWRobotTraining() {
@@ -61,17 +61,14 @@ public class BWRobotTraining {
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
 	        recordReader.initialize(trainData);
-	        // Data split 80/20
-	        // 1500, 71 - 40.0% A, 45.2% P, 40.0% R, 42.6% F1
-	        // 1200, 61 - 23.7% A, 47.6% P, 23.7% R, 31.0% F1
-	        // 948, 50  - 36.2% A, 41.1% P, 36.2% R, 38.5% F1
 	        
 	        // Data split 50/50
 	        // 1500, 71 - 42.0% A, 47.1% P, 43.7% R, 45.3% F1
 	        
-	        int l1out = 1500;
-	        int outputIn = 71;
-	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
+	        int l1out = 500;
+	        int l2out = 50;
+	        System.out.println(" --------- # Layer settings: " + l1out + ", " + l2out + " -----------");
+	        System.out.println(" --------- seed: " + seed);
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .seed(seed)
@@ -90,15 +87,15 @@ public class BWRobotTraining {
 	                .build())
 	        .layer(1,  new DenseLayer.Builder()
 	                .nIn(l1out)
-	                .nOut(outputIn)
+	                .nOut(l2out)
 	                .weightInit(WeightInit.XAVIER)
 	                .build())
 	        .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 	                .activation("softmax")
-	                .nIn(outputIn)
+	                .nIn(l2out)
 	                .nOut(outputNum)
 	                .build())
-	        .pretrain(true)
+	        .pretrain(false)
 	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)
 	        .build();
@@ -107,13 +104,13 @@ public class BWRobotTraining {
 	        System.out.println(" --- start training ---");
 	        long start = System.currentTimeMillis();
 	        model.init();
-	        model.setListeners(new ScoreIterationListener(2));
+	        model.setListeners(new ScoreIterationListener(1));
 
 	        for (int i=0; i < epochs; i++) {
 		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 		        while( dataIter.hasNext()) {
 		        	DataSet nxt = dataIter.next();
-		        	model.fit(nxt.getFeatureMatrix());
+		        	model.fit(nxt.getFeatureMatrix(), nxt.getLabels());
 		        }
 	        }
 	        long end = System.currentTimeMillis();

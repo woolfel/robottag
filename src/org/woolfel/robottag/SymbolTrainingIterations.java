@@ -28,7 +28,7 @@ import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
-public class SymbolTrainingSeeds {
+public class SymbolTrainingIterations {
 
 	protected static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
     protected static int height = 50;
@@ -39,10 +39,10 @@ public class SymbolTrainingSeeds {
     protected static int epochs = 4; //4000;
 
     public static final Random randNumGen = new Random();
-    private static Logger log = Logger.getLogger(SymbolTrainingSeeds.class);
+    private static Logger log = Logger.getLogger(SymbolTrainingIterations.class);
     private static List<Integer> goodSeeds = new ArrayList<Integer>();
     
-	public SymbolTrainingSeeds() {
+	public SymbolTrainingIterations() {
 	}
 
 	public static void main(String[] args) {
@@ -60,25 +60,17 @@ public class SymbolTrainingSeeds {
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
 
-	        // 100, 23 - 35% A, 23.0% P, 35% R, 28.0% F1
-	        // 100, 24 - 40% A, 64.7% P, 40% R, 49.4% F1
-	        // 900, 71 - 45% A, 45.8% P, 45% R, 45.4% F1
-	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
-	        
-	        // seed values
-	        // 4464, 4898
-	        
+        
 	        int l1out = 900;
 	        int outputIn = 500;
 
 	        System.out.println(" --------- # of input for Output Layer: " + outputIn + " -----------");
 
-	        for (int s=4450; s < 4900; s++) {
+	        for (int i=10; i < 100; i++) {
 	        	//System.out.println(" ------ seed: " + s + " ---------- ");
 		        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 		        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-		        .seed(s)
-		        .iterations(1)
+		        .iterations(i)
 		        .activation("relu")
 		        .weightInit(WeightInit.XAVIER)
 		        .learningRate(rate)
@@ -114,7 +106,7 @@ public class SymbolTrainingSeeds {
 		        model.setListeners(new ScoreIterationListener(1));
 
 		        recordReader.initialize(trainData);
-		        for (int i=0; i < epochs; i++) {
+		        for (int e=0; e < epochs; e++) {
 			        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 1, 1, outputNum);
 			        model.fit(dataIter);
 		        }
@@ -136,12 +128,12 @@ public class SymbolTrainingSeeds {
 		        
 		        //if (eval.accuracy() > 0.5 || eval.precision() > 0.5) {
 		        	log.info(eval.stats());
-		        	log.info(" ------------------ Seed: " + s);
-		        	goodSeeds.add(s);
+		        	log.info(" ------------------ iterations: " + i);
+		        	//goodSeeds.add(s);
 			        System.out.println("****************Example finished********************");
 			        System.out.println(eval.stats());
 			        long duration = end - start;
-			        System.out.println(" ------------------ Seed: " + s);
+			        System.out.println(" ------------------ iterations: " + i);
 			        System.out.println(" training duration in MS: " + duration);
 			        System.out.println(" training duration in Min: " + (duration/1000)/60);
 		        //}

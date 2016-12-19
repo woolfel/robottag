@@ -34,8 +34,8 @@ public class SymbolTraining3 {
     protected static int width = 50;
     protected static int channels = 3;
     protected static int outputNum = 4;
-    protected static final long seed = 4464;
-    protected static double rate = 0.006;
+    protected static final long seed = 4878;
+    protected static double rate = 0.0006;
     protected static int epochs = 5; //4000;
 
     public static final Random randNumGen = new Random(seed);
@@ -58,6 +58,7 @@ public class SymbolTraining3 {
 	        InputSplit testData = filesInDirSplit[1];
 	        
 	        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
+	        ImageRecordReader testReader = new ImageRecordReader(height,width,channels,labelMaker);
 
 	        // 900, 71 - 45% A, 45.8% P, 45% R, 45.4% F1
 	        // 900,500 - 40% A, 53.3% P, 40% R, 45.7% F1
@@ -69,12 +70,11 @@ public class SymbolTraining3 {
 	        int outputIn = 500;
 
 	        System.out.println(" --------- # of input the Layers: " + l1out + ", " + outputIn + " -----------");
-	        System.out.println(" --------- new seed: " + seed + " -----------");
+	        //System.out.println(" --------- new seed: " + seed + " -----------");
 	        
 	        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 	        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-	        .seed(seed)
-	        .iterations(1)
+	        .iterations(50)
 	        .activation("relu")
 	        .weightInit(WeightInit.XAVIER)
 	        .learningRate(rate)
@@ -85,20 +85,18 @@ public class SymbolTraining3 {
 	        		.nIn(height * width * channels)
 	                .nOut(l1out)
 	                .weightInit(WeightInit.XAVIER)
-	                .activation("relu")
 	                .build())
 		    .layer(1,  new DenseLayer.Builder()
             		.nIn(l1out)
             		.nOut(outputIn)
             		.weightInit(WeightInit.XAVIER)
-            		.activation("relu")
             		.build())
 		    .layer(2, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD)
 		            .activation("softmax")
 		            .nIn(outputIn)
 		            .nOut(outputNum)
 		            .build())
-	        .pretrain(true)
+	        .pretrain(false)
 	        .setInputType(InputType.convolutional(height,width,channels))
 	        .backprop(true)
 	        .build();
@@ -107,34 +105,28 @@ public class SymbolTraining3 {
 	        System.out.println(" --- start training ---");
 	        long start = System.currentTimeMillis();
 	        model.init();
-	        model.setListeners(new ScoreIterationListener(1));
+	        model.setListeners(new ScoreIterationListener(10));
 
 	        recordReader.initialize(trainData);
 	        for (int i=0; i < epochs; i++) {
-		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
-		        while( dataIter.hasNext()) {
-		        	DataSet nxt = dataIter.next();
-		        	model.fit(nxt.getFeatureMatrix());
+		        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 40, 1, outputNum);
+		        model.fit(dataIter);
+		        // test phase
+		        testReader.initialize(testData);
+		        Evaluation eval = new Evaluation(outputNum);
+		        DataSetIterator testIter = new RecordReaderDataSetIterator(testReader, 20, 1, outputNum);
+		        while(testIter.hasNext()){
+		            DataSet next = testIter.next();
+		            INDArray output = model.output(next.getFeatureMatrix(), false);
+		            eval.eval(next.getLabels(), output);
 		        }
+		        
+		        System.out.println(eval.stats());
 	        }
 	        long end = System.currentTimeMillis();
-	        System.out.println(" --- end training ---");
-	        
-	        System.out.println(" --- start TEST ---");
-	        // test phase
-	        recordReader.reset();
-	        recordReader.initialize(testData);
-	        Evaluation eval = new Evaluation(outputNum);
-	        DataSetIterator testIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
-	        while(testIter.hasNext()){
-	            DataSet next = testIter.next();
-	            INDArray output = model.output(next.getFeatureMatrix(), true);
-	            eval.eval(next.getLabels(), output);
-	        }
-	        System.out.println(" --- end TEST ---");
-	        
 	        System.out.println("**************** Run finished********************");
-	        System.out.println(eval.stats());
+	        recordReader.reset();
+
 	        long duration = end - start;
 	        System.out.println(" training duration in MS: " + duration);
 	        System.out.println(" training duration in Min: " + (duration/1000)/60);
