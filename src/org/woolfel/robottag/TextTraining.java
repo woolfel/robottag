@@ -25,6 +25,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
@@ -119,6 +120,9 @@ public class TextTraining {
 					eval.eval(next.getLabels(), output);
 				}
 				System.out.println(eval.stats());
+				if (eval.accuracy() == 1.0) {
+					 ModelSerializer.writeModel(model, new File("./data/textgoodmodel.model"), true);
+				}
 				recordReader.reset();
 				testReader.reset();
 			}
