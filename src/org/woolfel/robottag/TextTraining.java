@@ -57,9 +57,6 @@ public class TextTraining {
 			BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 			FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
-			int l1out = 1000; // (height * width * channels)/50;
-			int oc = 250;
-
 			// Split the image files into train and test.
 			InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 50, 50);
 			InputSplit trainData = filesInDirSplit[0];
