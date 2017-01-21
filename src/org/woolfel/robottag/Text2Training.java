@@ -68,7 +68,7 @@ public class Text2Training {
 			testReader.initialize(testData);
 
 			boolean stop = false;
-			for (int i=0; i < 200; i++) {
+			for (int i=0; i < 500; i++) {
 				MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 
 						.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -118,7 +118,7 @@ public class Text2Training {
 					}
 					System.out.println(eval.stats());
 					log.info(eval.stats());
-					if (eval.accuracy() > 0.96) {
+					if (eval.accuracy() > 0.98) {
 						 ModelSerializer.writeModel(model, new File("./data/text2-goodmodel.model"), true);
 						 stop = true;
 						 break;
@@ -135,6 +135,7 @@ public class Text2Training {
 				System.out.println(" training duration in Min: " + (duration / 1000) / 60);
 				System.out.println(" training duration in hours: " + (duration / 1000) / 3600);
 				if (stop) {
+					System.out.println("iterations to get good model: " + i);
 					break;
 				}
 			}
