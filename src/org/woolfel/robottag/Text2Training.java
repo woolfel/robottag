@@ -68,7 +68,7 @@ public class Text2Training {
 			testReader.initialize(testData);
 
 			boolean stop = false;
-			for (int i=0; i < 500; i++) {
+			for (int i=0; i < 5000; i++) {
 				MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 
 						.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
@@ -107,7 +107,7 @@ public class Text2Training {
 				for (int e = 0; e < epochs; e++) {
 					DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, 20, 1, outputNum);
 					model.fit(dataIter);
-					System.out.println("epoch " + i + " done");
+					System.out.println("iterations: " + i + " / epoch " + e + " done");
 
 					DataSetIterator testIter = new RecordReaderDataSetIterator(testReader, 20, 1, outputNum);
 					Evaluation eval = new Evaluation(outputNum);
@@ -119,8 +119,8 @@ public class Text2Training {
 					System.out.println(eval.stats());
 					log.info(eval.stats());
 					if (eval.accuracy() > 0.98) {
-						 ModelSerializer.writeModel(model, new File("./data/text2-goodmodel.model"), true);
-						 stop = true;
+						 ModelSerializer.writeModel(model, new File("./data/text2-gm-" + i + ".model"), true);
+						 //stop = true;
 						 break;
 					}
 					recordReader.reset();

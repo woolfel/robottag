@@ -35,7 +35,9 @@ public class Text2Saved {
 	
 	public static void main(String[] args) {
 		
-		File parentDir = new File("./data/text2");
+		File parentDir = new File("./data/text2_test");
+		String modelfile = "./data/text2-goodmodel.model";
+		System.out.println(modelfile);
 
 		ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
 		BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
@@ -49,7 +51,7 @@ public class Text2Saved {
 		try {
 			testReader.initialize(testData);
 			
-			MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(new File("./data/text2-goodmodel.model"));
+			MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(new File(modelfile));
 			
 			DataSetIterator testIter = new RecordReaderDataSetIterator(testReader, 20, 1, outputNum);
 			Evaluation eval = new Evaluation(outputNum);
