@@ -59,5 +59,7 @@
 	<classpathentry kind="lib" path="lib/jackson-0.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-jdbc-api-0.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/nd4j-parameter-server-0.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.20.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
